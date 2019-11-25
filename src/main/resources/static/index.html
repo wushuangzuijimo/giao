@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script
+            src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script
+            src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <script
+            src="https://cdn.bootcss.com/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="http://cdn.bootcss.com/jquery/1.12.3/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+    <link
+            href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
+            rel="stylesheet">
+    <style type="text/css">
+        
+        [v-cloak] {
+            display: none;
+        }
+        
+        #update, #del {
+            width: 45%;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        .v-enter, .v-leave-to {
+            opacity: 0;
+            transform: translateX(80px);
+        }
+
+        .v-enter-to, .v-leave {
+            opacity: 1;
+            transform: translateX(0px);
+        }
+
+        .v-enter-active, .v-leave-active {
+            transition: all .6s ease
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+            <div id="app"  v-cloak>
+                <table
+                       class="table table-hover table-striped table-bordered table-light">
+                    <thead>
+                    <tr>
+                        <th>uid</th>
+                        <th>uname</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="item in users.list">
+
+                        <th>{{item.uid}}</th>
+                        <th>{{item.uname}}</th>
+                        <th>
+                            <button id="update" type="button" class="btn btn-outline-warning btn-sm" data-target="#wushuang" @click="updateUI(item)"
+                                    data-toggle="modal" >修改</button>
+                            <button id="del" v-on:click='del(item.uid)' type="button"
+                                    class="btn btn-outline-danger btn-sm ">删除</button>
+                        </th>
+                    </tr>
+
+                    </tbody>
+                </table>
+                <center>
+                <div class="container">
+                    <ul class="pagination">
+                        <p>{{users.total}}条记录</p>
+                        <p>{{users.pageNum}}/{{users.pageSize}}</p>
+                        <li class="page-item"><a @click='find(users.prePage)'>Previous</a></li>
+                        <li class="page-item" v-for="i in navigatepageNums"><a class="page-link">{{i}}</a>
+                        </li>
+
+                        <li class="page-item"><a @click='find(users.nextPage)'>Next</a></li>
+                    </ul>
+                </div>
+                </center>
+
+
+                <div class="container">
+                    <!-- 按钮：用于打开模态框 -->
+                    <!-- <button type="button" class="btn btn-outline-warning btn-sm" @click="updateUI"
+                        data-toggle="modal" data-target="#Modal">修改</button> -->
+
+                    <!-- 模态框 -->
+                    <div class="modal fade" id="wushuang">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+
+                                <!-- 模态框头部 -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">修改</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <!-- 模态框主体 -->
+                                <div class="modal-body">
+                                    <div>
+                                        <label for="email">申请ID:</label> <input type="text"
+                                                                                class="form-control" v-model="u_uid" id="email"
+                                                                                placeholder="请输入申请ID">
+                                    </div>
+                                    <div>
+                                        <label for="pwd">编号:</label> <input type="text"
+                                                                            style="width: 20%" class="form-control" v-model="u_uname"
+                                                                            id="pwd" placeholder="请输入编号">
+                                    </div>
+
+                                </div>
+
+                                <!-- 模态框底部 -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning"
+                                            @click="update" data-dismiss="modal">修改</button>
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">关闭</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <button id="ok" @click="flag=!flag" type="button"
+                        class="btn btn-success btn-block">添加</button>
+
+
+                <transition>
+                    <div v-if="flag">
+
+                        <div class="container">
+                            <!-- <h2>添加</h2> -->
+                            <!-- 按钮：用于打开模态框 -->
+                            <button type="button" class="btn btn-primary btn-block"  style="margin-top:10px"data-toggle="modal"
+                                    data-target="#myModal" >添加 冲冲冲~~~</button>
+
+                            <!-- 模态框 -->
+                            <div class="modal fade" id="myModal">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+
+                                        <!-- 模态框头部 -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">添加</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+
+                                        <!-- 模态框主体 -->
+                                        <div class="modal-body">
+                                            <div>
+                                                <label for="email">申请ID:</label> <input type="text"
+                                                                                        class="form-control" v-model="u_uid" id="email"
+                                                                                        placeholder="请输入申请ID">
+                                            </div>
+                                            <div>
+                                                <label for="pwd">编号:</label> <input type="text"
+                                                                                    style="width: 20%" class="form-control" v-model="u_uname"
+                                                                                    id="pwd" placeholder="请输入编号">
+                                            </div>
+
+
+                                        <!-- 模态框底部 -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success" @click="save"
+                                                    data-dismiss="modal">添加</button>
+                                            <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">关闭</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        </div>
+                    </div>
+                </transition>
+
+                <marquee>
+
+
+                        i can fly!!
+                </marquee>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+</body>
+<script>
+
+    var vue = new Vue({
+        el : "#app",
+        data : {
+            users : [],
+            flag: false,
+            navigatepageNums: [],
+
+            uid:'',
+            uname:'',
+            u_uid:'',
+            u_uname:'',
+
+            apno:'',
+
+        },
+        /* mounted : function() { //mounted　表示这个 Vue 对象加载成功了
+            var self = this
+            axios.get("http://47.111.31.86:8080/paipai-dev/paipai-dev/applys").then(
+                    function(response) {
+                        self.applys = response.data; //此时还是字符串
+
+            })
+        }, */
+        created:function(){
+            this.find(1);
+        },
+
+
+        methods:{
+
+            find(pn){
+                var self = this;
+                axios.get("http://localhost:8888/users",{
+                    params:{
+                        pn:pn
+                    }
+                }).then(function(response){
+                    self.users =response.data;
+                    self.navigatepageNums = response.data.navigatepageNums;
+
+                })
+
+
+            },
+            del(uid) {
+
+
+                var self = this;
+                axios.delete("http://localhost:8888/users?uid=" + uid).then(function (response) {
+
+                    alert("删除成功!");
+                    self.find(self.users.pageNum);
+
+                })
+                /* this.$http.post("http://localhost:8888/users",{"uid":uid,"_method":"delete"},{emulateJSON:true}).then(function () {
+
+
+                     this.find(users.pn);
+
+                 })
+    */
+
+
+            },
+            save(){
+
+                var self=this;
+                axios.post("http://localhost:8888/users",{
+                    uid:self.u_uid,
+                    uname:self.u_uname,
+
+                    /* uid:self.a_uid */
+                }).then(function(response){
+                    alert('添加成功!');
+                    self.find(self.users.pageNum);
+
+                    self.u_uid='',
+                        self.u_uname=''
+                })
+
+            },
+            update(){
+                var self = this;
+                axios.put("http://localhost:8888/users",{
+
+
+
+                    uid:self.u_uid,
+                    uname:self.u_uname
+                }).then(function(){
+
+                    self.find(self.users.pageNum);
+                });
+
+
+
+
+
+
+            },
+            updateUI(item){
+
+                this.u_uname=item.uname;
+                this.u_uid=item.uid;
+
+            },
+
+
+
+
+
+
+        }
+    });
+</script>
+</html>

@@ -1,0 +1,32 @@
+server:
+  port: 8888
+
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/userx?characterEncoding=utf-8
+    password: zxczxc
+    username: root
+
+
+
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodArguments: true
+  params: count=count
+
+
+
+
+logging:
+  level:
+    com.woniuxy: debug
+
+
+
+
+
